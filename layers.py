@@ -11,8 +11,8 @@ class Conv2d:
         self.padding = padding
         self.stride = 1
         self.use_bias = use_bias
-        self.activation = activation
-        self.weights = xavier_init(input_num_filters,num_filters,(kernel_size,kernel_size,input_num_filters,num_filters))
+        self.W = xavier_init(input_num_filters,num_filters,(kernel_size,kernel_size,input_num_filters,num_filters))
+        self.params = [self.W]
     
     def apply_filter(self,curr_slice,filter):
         '''
@@ -74,11 +74,7 @@ class Conv2d:
                         w_start,w_end = w*s,w*s+k
 
                         curr_slice = img_padded[h_start:h_end,w_start:w_end,:]
-                        output[i,h,w,c] = self.apply_filter(curr_slice,self.weights[:,:,:,c])
-
-
-        if(self.activation=='relu'):
-            output = relu(output)
+                        output[i,h,w,c] = self.apply_filter(curr_slice,self.W[:,:,:,c])
 
         return output
     
@@ -90,6 +86,7 @@ class MaxPooL2d:
     def __init__(self, kernel_size):
         self.kernel_size = kernel_size
         self.stride = kernel_size
+        self.params = []
     
     def forward(self,batch):
         '''
@@ -123,36 +120,48 @@ class MaxPooL2d:
 class Dense:
     '''Dense Layer'''
 
-    def __init__(self,n_output,n_input,activation='softmax',use_bias=True):
+    def __init__(self,n_output,n_input,use_bias=True):
         self.n_output = n_output
         self.n_input = n_input
-        self.activation = activation
         self.use_bias = use_bias
-        self.weights = xavier_init(n_input,n_output,(n_input,n_output))
+        self.W = xavier_init(n_input,n_output,(n_input,n_output))
         self.b = np.zeros((1,n_output))
-
-        self.dw, self.db = None, None
-
+        
         if(use_bias):
             self.b =  xavier_init(n_input,n_output,(1,n_output))
+        self.params = [self.W,self.b]
+        
 
-    @property 
-    def gradients(self):
-        if self.dw is None and self.db is None:
-            return None
-        return self.dw, self.db
-
-    @property
-    def weights(self):
-        return self.dw, self.db
 
     def forward(self,batch):
-        assert batch.shape[1] == self.n_input
-        output = np.dot(batch,self.weights)+self.b
+        self.X = batch
+        assert self.X .shape[1] == self.n_input
+        output = np.dot(self.X,self.W)+self.b
         
-        if(self.activation=='softmax'):
-            return softmax(output)
+        return output
 
+    def backward(self,gradient):
+        pass
+
+class Relu:
+    def __init__(self):
+        self.params = []
+
+    def forward(self,batch):
+        pass
+
+    def backward(self,gradient):
+        pass
+    
+
+class Softmax():
+    def __init__(self):
+       self.params = []
+    
+    def forward(self,batch):
+        pass
+    def backward(self,gradient):
+        pass
 
 
 

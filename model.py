@@ -2,25 +2,29 @@ import time
 
 class SequentialModel:
     '''Provides training and inference features on this model.'''
-    def __init__(self, layers,optimizer):
+    def __init__(self, layers,loss):
         self.layers = layers
-        self.optimizer = optimizer
-        self.train_acc = []
-        self.train_loss = []
-        self.valid_acc = []
-        self.valid_loss = []
+        self.loss = loss
+        self.params = []
+        for layer in layers:
+            self.params.append(layer.params)
 
-    def train(self,X_train,y_train,X_valid,y_valid,epochs=10,batch_size=32):
-        '''Train model'''
+    def forward(self,batch_x):
+        for layer in self.layers:
+            X = layer.forward(batch_x)
+        return X
 
-        for epoch in range(epochs):
-            self.forward()
-            self.backward()
-            self.update_weights()
-            
-    def forward(self,batch):
-        pass
-    def backward(self,activation):
-        pass
-    def update_weights():
-        pass
+    def backward(self,dout):
+        grads = []
+        for layer in self.layers:
+            dout,grad = layer.backward(dout)
+            grads.append(grad)
+        return grads
+
+    def train_step(self,batch_x,batch_y):
+        out = self.forward(batch_x)
+        #TODO return loss and grads
+
+    def predict(self,X):
+        #TODO self.forward and return max of probabs
+    

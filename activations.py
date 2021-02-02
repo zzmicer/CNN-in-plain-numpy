@@ -5,6 +5,7 @@ def softmax(input):
     exp = np.exp(input)
     return exp/np.sum(exp)
 
+
 def relu(input):
     '''Rectified Linear Unit activation function'''
     return np.maximum(0,input)

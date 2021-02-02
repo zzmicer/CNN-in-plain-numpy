@@ -7,3 +7,4 @@ class MiniBatchSGD:
         for layer in layers:
             #TODO get weights, and layer gradients
             #new weights = weigths - lr*gradient
+            pass
