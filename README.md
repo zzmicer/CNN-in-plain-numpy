@@ -4,6 +4,8 @@ Implementation of Convolutional neural network using only NumPy library.
 
 ---
 
+![lenet-5](https://user-images.githubusercontent.com/41323462/114265237-64fa5a80-99f8-11eb-984e-e9fa5d0294ec.png)
+
 This project was created to better understand the CNN blocks, their forward and backward pass.
 The idea was taken from practical assignments to Dr. Andrew Ng's Convolutional Neural Nets course.
 
